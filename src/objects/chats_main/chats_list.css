@@ -1,0 +1,7 @@
+.chatslist{
+	width: 30%;
+	list-style-type: none;
+	position: relative;
+	padding-left:20px;
+	overflow-y: scroll;
+}

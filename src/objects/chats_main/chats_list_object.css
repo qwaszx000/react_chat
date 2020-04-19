@@ -1,0 +1,30 @@
+.chatobject{
+	height: 55px;
+	width: 96%;
+	text-decoration: none;
+}
+
+.chatobject:hover{
+	background-color: #DDF;
+	cursor: pointer;
+}
+
+.chatobject img{
+	width: 50px;
+	height: 50px;
+	position: relative;
+	left: 2px;
+}
+
+.chatobject h5{
+	position: relative;
+	margin-left: 25%;
+	display: inline;
+}
+
+.chatobject input{
+	height: 50%;
+	width: 50%;
+	border: none;
+	margin-left: 10%;
+}
