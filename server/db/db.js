@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require("mongoose");//.set('debug', true); //debug
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/kwasmessenger', {useNewUrlParser: true})

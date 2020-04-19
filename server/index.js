@@ -1,4 +1,3 @@
-require('dotenv').config();
 //modules
 const express = require('express');
 const bodyParser = require("body-parser");
