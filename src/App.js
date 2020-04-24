@@ -26,11 +26,21 @@ class App extends React.Component{
     this.writeMessage = this.writeMessage.bind(this);
     this.addUserToChat = this.addUserToChat.bind(this);
     this.handleServerUpdate = this.handleServerUpdate.bind(this);
+    this.updateApp = this.updateApp.bind(this);
 
     this.subscriberClient = new subscriberClient();
     this.subscriberClient.cookie = Cookies.get('user_cookie');
     this.subscriberClient.handleServerUpdate = this.handleServerUpdate;
     this.subscriberClient.subscribe();
+  }
+
+
+  //rerender self
+  updateApp(){
+    this.getCurrentUserID()
+    this.getUserChatsFromServer();
+    this.getMessagesFromServer();
+    this.setState(this.state);
   }
 
   handleServerUpdate(){
@@ -39,66 +49,70 @@ class App extends React.Component{
   }
 
   getUserChatsFromServer(){
+    var state = this.state;
     //if user is guest
     if(Cookies.get("user_cookie") === undefined){
       console.log("log in first");
-      return;
-    }
-    //send ajax
-    var state = this.state;
-    $.ajax({
-        url: "http://localhost:8080/chats",
-        type: "post",
-        async: false,
-        data: {"user_cookie": Cookies.get("user_cookie")},
-        error: (jqXHR, textStatus, error) => {
-          console.log(textStatus + " / " + error + " / " + jqXHR.status);
-        },
-        success: function(res){
-          //console.log("Success: " + res);
-          if(res.length === 0 || res.code <= -1){
-            console.log(res.errmsg);
-            return;
+      state.chats = [];
+    } else {
+      //send ajax
+      $.ajax({
+          url: "http://localhost:8080/chats",
+          type: "post",
+          async: false,
+          data: {"user_cookie": Cookies.get("user_cookie")},
+          error: (jqXHR, textStatus, error) => {
+            console.log(textStatus + " / " + error + " / " + jqXHR.status);
+          },
+          success: function(res){
+            //console.log("Success: " + res);
+            if(res.length === 0 || res.code <= -1){
+              console.log(res.errmsg);
+              return;
+            }
+            state.chats = res.chats;
           }
-          state.chats = res.chats;
-        }
-    });
-    //this.setState(state); //calls error
+      });
+    }
     this.state = state;
   }
 
   getCurrentUserID(){
+    var state = this.state;
     //if user is guest
     if(Cookies.get("user_cookie") === undefined){
-      console.log("log in first");
-      return;
-    }
-    //send ajax
-    var state = this.state;
-    $.ajax({
-        url: "http://localhost:8080/currID",
-        type: "post",
-        async: false,
-        data: {"cookie": Cookies.get("user_cookie")},
-        error: (jqXHR, textStatus, error) => {
-          console.log(textStatus + " / " + error + " / " + jqXHR.status);
-        },
-        success: function(res){
-          //console.log("Success: " + res);
-          if(res.length === 0 || res.code <= -1){
-            console.log(res.errmsg);
-            return;
+      state.userID = "";
+    } else {
+      //send ajax
+      $.ajax({
+          url: "http://localhost:8080/currID",
+          type: "post",
+          async: false,
+          data: {"cookie": Cookies.get("user_cookie")},
+          error: (jqXHR, textStatus, error) => {
+            console.log(textStatus + " / " + error + " / " + jqXHR.status);
+          },
+          success: function(res){
+            //console.log("Success: " + res);
+            if(res.length === 0 || res.code <= -1){
+              console.log(res.errmsg);
+              return;
+            }
+            state.userID = res.id;
           }
-          state.userID = res.id;
-        }
-    });
-    //this.setState(state); //calls error
+      });
+    }
     this.state = state;
   }
 
   //callback function for chats_list
   choiseChat(e){
     e.preventDefault();
+    //if user is guest
+    if(Cookies.get("user_cookie") === undefined){
+      return;
+    }
+
     if(e.target.id === "-1"){
       var name_input = document.createElement("input");
       onEnter = onEnter.bind(this);
@@ -138,36 +152,32 @@ class App extends React.Component{
   }
 
   getMessagesFromServer(){
-    if(this.state.selected_chat === null){
-      return;
-    }
-
-    //if user is guest
-    if(Cookies.get("user_cookie") === undefined){
-      console.log("log in first");
-      return;
-    }
-    //send ajax
     var state = this.state;
-    $.ajax({
-        url: "http://localhost:8080/messages",
-        type: "post",
-        async: false,
-        data: {"chat_id": state.selected_chat},
-        error: (jqXHR, textStatus, error) => {
-          console.log(textStatus + " / " + error + " / " + jqXHR.status);
-        },
-        success: function(res){
-          //console.log("Success: " + res);
-          if(res.length === 0 || res.code <= -1){
-            console.log(res.errmsg);
-            return;
+    //no chat selected
+    if(this.state.selected_chat === null){
+      state.messages = [];
+    } else if(Cookies.get("user_cookie") === undefined){ //if user is guest
+      state.messages = [];
+    } else {
+      //send ajax
+      $.ajax({
+          url: "http://localhost:8080/messages",
+          type: "post",
+          async: false,
+          data: {"chat_id": state.selected_chat},
+          error: (jqXHR, textStatus, error) => {
+            console.log(textStatus + " / " + error + " / " + jqXHR.status);
+          },
+          success: function(res){
+            if(res.length === 0 || res.code <= -1){
+              console.log(res.errmsg);
+              return;
+            }
+            state.messages = res.messages;
           }
-          state.messages = res.messages;
-        }
-    });
-    this.setState(state); //calls error
-    //this.state = state;
+      });
+    }
+    this.setState(state);
   }
 
   writeMessage(text){
@@ -220,7 +230,7 @@ class App extends React.Component{
   render(){
     return (
       <div className="App">
-        <Header userID={this.state.userID} addUserToChat={this.addUserToChat}/>
+        <Header userID={this.state.userID} addUserToChat={this.addUserToChat} updateAppFunction={this.updateApp}/>
         <div className="container h-100">
           <div className="row h-100">
             <ChatsList chats={this.state.chats} onclickCallback={this.choiseChat}/>

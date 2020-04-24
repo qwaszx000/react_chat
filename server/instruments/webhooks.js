@@ -8,7 +8,6 @@ class webHooksServer{
 		this.subscribers = []; //cookie: connection
 
 		io.on('connection', (client) => {
-			console.log("Connected: ");
 			client.on('subscribe', (cookie) => {
 				console.log("Client subscribed with cookie: ", cookie);
 				this.subscribers.push({

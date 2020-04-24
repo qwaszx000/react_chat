@@ -148,16 +148,18 @@ class Header extends React.Component{
 		//hide form
 		form.hide();
 
-		//update header
+		//update header and app
 		this.setState(this.state);
+		this.props.updateAppFunction();
 	}
 
 	logoutUser(event){
 		event.preventDefault();
 		Cookies.remove('user_cookie');
 
-		//update header
+		//update header and app
 		this.setState(this.state);
+		this.props.updateAppFunction();
 	}
 }
 
