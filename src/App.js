@@ -23,8 +23,11 @@ class App extends React.Component{
     this.getUserChatsFromServer = functions.getUserChatsFromServer.bind(this);
 
     this.choiseChat = functions.choiseChat.bind(this);
+    this.getMessagesFromServer = functions.getMessagesFromServer.bind(this);
+
     this.writeMessage = functions.writeMessage.bind(this);
     this.addUserToChat = functions.addUserToChat.bind(this);
+    
     this.handleServerUpdate = functions.handleServerUpdate.bind(this);
     this.updateApp = functions.updateApp.bind(this);
 

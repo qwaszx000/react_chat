@@ -7,7 +7,7 @@ function updateApp(){
   this.getCurrentUserID()
   this.getUserChatsFromServer();
   this.getMessagesFromServer();
-  this.setState(this.state);
+  //this.setState(this.state);
 }
 
 function handleServerUpdate(){
