@@ -8,12 +8,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 //components
 import App from './App';
+//stores
+import MainStore from './stores/MainStore';
 //worker
 import * as serviceWorker from './serviceWorker';
 
+
+var main_store = new MainStore();
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App MainStore={main_store}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
